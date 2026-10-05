@@ -1,0 +1,37 @@
+{
+  "name": "cpu-surviver",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "content"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "npm run dev -w @cpu/client",
+    "build": "npm run build -w @cpu/client",
+    "preview": "npm run preview -w @cpu/client",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "lint": "eslint .",
+    "typecheck": "tsc -p packages/sim && tsc -p packages/tools && tsc -p packages/client && tsc -p content",
+    "content:check": "tsx packages/tools/src/content-check.ts",
+    "replay": "tsx packages/tools/src/replay-cli.ts",
+    "replay:update": "tsx packages/tools/src/replay-cli.ts --update",
+    "check": "npm run lint && npm run typecheck && npm run content:check && npm test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "1.56.1",
+    "@types/node": "^22.15.0",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
+  }
+}

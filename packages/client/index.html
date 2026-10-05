@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>蟲潮交界</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #0b0f17; color: #cfd6e4; font-family: system-ui, "Noto Sans TC", sans-serif; overflow: hidden; }
+      #game { position: fixed; inset: 0; }
+      #game canvas { display: block; image-rendering: pixelated; image-rendering: crisp-edges; }
+      #hud { position: fixed; left: 12px; bottom: 10px; font-size: 13px; opacity: .75; pointer-events: none; text-shadow: 0 1px 2px #000; }
+      #hud b { color: #fff; }
+      #debug { position: fixed; top: 8px; right: 8px; width: 300px; max-height: calc(100% - 16px); overflow: auto; background: rgba(8, 12, 20, .92); border: 1px solid #36435c; padding: 10px; font: 12px/1.5 ui-monospace, Consolas, monospace; display: none; }
+      #debug.open { display: block; }
+      #debug h4 { margin: 10px 0 4px; font-size: 12px; color: #8db0f5; }
+      #debug h4:first-child { margin-top: 0; }
+      #debug button { font: inherit; cursor: pointer; background: #1f3d6b; color: #fff; border: 1px solid #36435c; padding: 2px 8px; margin: 0 4px 4px 0; }
+      #debug button:hover { background: #2a5090; }
+      #debug label { display: block; cursor: pointer; }
+      #debug pre { margin: 0; white-space: pre-wrap; word-break: break-all; color: #aab4c8; }
+      @media (max-width: 700px) { #debug { width: calc(100% - 16px); } }
+    </style>
+  </head>
+  <body>
+    <div id="game"></div>
+    <div id="hud"></div>
+    <div id="debug" aria-label="除錯面板"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

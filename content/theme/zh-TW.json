@@ -1,0 +1,19 @@
+{
+  "gameTitle": "蟲潮交界",
+  "schoolName": "霧嶺警察大學",
+  "zones": {
+    "dorm": "宿舍",
+    "hall": "大禮堂",
+    "range": "射擊館",
+    "admin": "行政大樓",
+    "gym": "技擊館",
+    "library": "圖書館",
+    "shrine": "土地公廟",
+    "plaza": "升旗場"
+  },
+  "ui": {
+    "subtitle": "I0 地基｜測試地圖",
+    "controls": "WASD 或方向鍵移動　` 鍵開關除錯面板",
+    "defaultPlayerName": "無名的學生"
+  }
+}

@@ -1,0 +1,142 @@
+{
+  "formatVersion": 1,
+  "description": "I0：四位玩家加入，往不同方向走，撞牆、換方向、中途離開一人",
+  "seed": "golden-i0",
+  "ticks": 600,
+  "commands": [
+    {
+      "tick": 0,
+      "playerId": "a",
+      "seq": 0,
+      "kind": "join",
+      "data": {
+        "name": "小明"
+      }
+    },
+    {
+      "tick": 0,
+      "playerId": "b",
+      "seq": 1,
+      "kind": "join",
+      "data": {
+        "name": "小華"
+      }
+    },
+    {
+      "tick": 0,
+      "playerId": "c",
+      "seq": 2,
+      "kind": "join",
+      "data": {
+        "name": "小美"
+      }
+    },
+    {
+      "tick": 0,
+      "playerId": "d",
+      "seq": 3,
+      "kind": "join",
+      "data": {
+        "name": "小強"
+      }
+    },
+    {
+      "tick": 5,
+      "playerId": "a",
+      "seq": 4,
+      "kind": "move",
+      "data": {
+        "x": 1,
+        "y": 0
+      }
+    },
+    {
+      "tick": 5,
+      "playerId": "b",
+      "seq": 5,
+      "kind": "move",
+      "data": {
+        "x": -1,
+        "y": 0
+      }
+    },
+    {
+      "tick": 5,
+      "playerId": "c",
+      "seq": 6,
+      "kind": "move",
+      "data": {
+        "x": 0,
+        "y": 1
+      }
+    },
+    {
+      "tick": 5,
+      "playerId": "d",
+      "seq": 7,
+      "kind": "move",
+      "data": {
+        "x": 0.7,
+        "y": -0.7
+      }
+    },
+    {
+      "tick": 150,
+      "playerId": "a",
+      "seq": 8,
+      "kind": "move",
+      "data": {
+        "x": 0,
+        "y": -1
+      }
+    },
+    {
+      "tick": 150,
+      "playerId": "b",
+      "seq": 9,
+      "kind": "move",
+      "data": {
+        "x": 1,
+        "y": 1
+      }
+    },
+    {
+      "tick": 150,
+      "playerId": "c",
+      "seq": 10,
+      "kind": "move",
+      "data": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
+      "tick": 300,
+      "playerId": "d",
+      "seq": 11,
+      "kind": "leave",
+      "data": {}
+    },
+    {
+      "tick": 300,
+      "playerId": "a",
+      "seq": 12,
+      "kind": "move",
+      "data": {
+        "x": -1,
+        "y": 0.5
+      }
+    },
+    {
+      "tick": 450,
+      "playerId": "b",
+      "seq": 13,
+      "kind": "move",
+      "data": {
+        "x": 0,
+        "y": 0
+      }
+    }
+  ],
+  "finalHash": "0d3c820c397334"
+}
