@@ -265,6 +265,8 @@ graph BT
 
 ### 3.3 M05 淘汰處理：「蛻者」是什麼？
 
+> 完整規格見 [specs/M05-molter.md](specs/M05-molter.md)，內容包括淘汰階梯、人性值、好處與壞處、替代方案比較、技術落地。
+
 **它屬於哪一類設計：** 「淘汰後玩法」（post-elimination gameplay），用來解決多人合作遊戲的「**玩家淘汰問題**」（player elimination problem）：一個人先死掉之後只能乾等，那段時間的體驗最差。
 
 **業界常見的解法：**
