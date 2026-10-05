@@ -41,7 +41,7 @@
 
 ## 4. 各輪細節
 
-### I0 地基
+### I0 地基　✅ 已完成，等你試玩（見 [I0 本輪說明](iterations/I0-handoff.md)）
 - **範圍：**
   - 專案骨架：TypeScript monorepo、測試、CI
   - M00 核心：世界、排程、Tick、亂數流、事件、序列化
