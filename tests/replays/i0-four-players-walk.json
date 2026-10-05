@@ -1,5 +1,5 @@
 {
-  "formatVersion": 1,
+  "formatVersion": 2,
   "description": "I0：四位玩家加入，往不同方向走，撞牆、換方向、中途離開一人",
   "seed": "golden-i0",
   "ticks": 600,
@@ -138,5 +138,6 @@
       }
     }
   ],
-  "finalHash": "0d3c820c397334"
+  "contentVersion": "1f4efacab30d03",
+  "finalHash": "10dc06e8721382"
 }

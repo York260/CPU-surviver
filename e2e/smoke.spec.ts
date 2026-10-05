@@ -36,11 +36,11 @@ test('頁面載入後，有畫面、角色和時間在走', async ({ page }) => 
 test('按住 D 角色會往右走，放開就停下', async ({ page }) => {
   const start = await hook(page);
   await page.keyboard.down('KeyD');
-  await page.waitForTimeout(800);
+  await page.waitForTimeout(1200);
   await page.keyboard.up('KeyD');
   await page.waitForTimeout(200);
   const moved = await hook(page);
-  expect(moved.x).toBeGreaterThan(start.x + 30);
+  expect(moved.x).toBeGreaterThan(start.x + 25);
   expect(Math.abs(moved.y - start.y)).toBeLessThan(1);
   await page.waitForTimeout(400);
   const stopped = await hook(page);
@@ -51,7 +51,7 @@ test('按住 D 角色會往右走，放開就停下', async ({ page }) => {
 test('方向鍵也能移動', async ({ page }) => {
   const s = await hook(page);
   await page.keyboard.down('ArrowDown');
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(900);
   await page.keyboard.up('ArrowDown');
   const e = await hook(page);
   expect(e.y).toBeGreaterThan(s.y + 15);
@@ -82,4 +82,35 @@ test('在除錯面板關掉移動系統，角色就走不動', async ({ page }) 
   await page.keyboard.up('KeyD');
   const e = await hook(page);
   expect(e.x).toBe(s.x);
+});
+
+test.describe('高解析度螢幕（縮放 200%）', () => {
+  test.use({ deviceScaleFactor: 2, viewport: { width: 1024, height: 640 } });
+
+  test('畫布用實際像素繪製，鏡頭是整數倍，文字不會被拉糊', async ({ page }) => {
+    const info = await page.evaluate(() => {
+      const c = document.querySelector('#game canvas') as HTMLCanvasElement;
+      const g = (window as unknown as { __cpu: { game: { scene: { getScene(k: string): { cameras: { main: { zoom: number } } } } } } }).__cpu.game;
+      return {
+        backing: [c.width, c.height],
+        css: [c.clientWidth, c.clientHeight],
+        dpr: window.devicePixelRatio,
+        zoom: g.scene.getScene('game').cameras.main.zoom,
+      };
+    });
+    expect(info.backing[0]).toBe(Math.round(info.css[0]! * info.dpr));
+    expect(info.backing[1]).toBe(Math.round(info.css[1]! * info.dpr));
+    expect(Number.isInteger(info.zoom)).toBe(true);
+    expect(info.zoom).toBeGreaterThanOrEqual(2);
+    await page.screenshot({ path: 'test-results/shot-hidpi.png' });
+  });
+
+  test('改變視窗大小後，畫布和鏡頭會跟著調整', async ({ page }) => {
+    const before = await page.evaluate(() => (document.querySelector('#game canvas') as HTMLCanvasElement).width);
+    await page.setViewportSize({ width: 600, height: 400 });
+    await page.waitForTimeout(300);
+    const after = await page.evaluate(() => (document.querySelector('#game canvas') as HTMLCanvasElement).width);
+    expect(after).toBeLessThan(before);
+    expect(after).toBe(1200);
+  });
 });

@@ -11,7 +11,7 @@ const c = <K extends CommandKind>(tick: number, playerId: string, kind: K, data:
  * 黃金重播的劇本。每個劇本都會產生一份 tests/replays/<名稱>.json。
  * 新增功能後，如果想把新行為也納入保護，就在這裡加一個劇本。
  */
-export const GOLDEN_SCENARIOS: Record<string, ReplayInput> = {
+export const GOLDEN_SCENARIOS: Record<string, Omit<ReplayInput, 'contentVersion'>> = {
   'i0-four-players-walk': {
     description: 'I0：四位玩家加入，往不同方向走，撞牆、換方向、中途離開一人',
     seed: 'golden-i0',

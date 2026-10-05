@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import type { EntityView } from '@cpu/sim';
-import { theme } from '@cpu/content';
+import { cameraTuning, theme } from '@cpu/content';
 import { MoveInput } from '../input';
 import type { GameSession } from '../session';
 import {
@@ -27,6 +27,7 @@ export class GameScene extends Phaser.Scene {
   private actors = new Map<number, Actor>();
   private input2!: MoveInput;
   private followed = false;
+  private readonly texts: Phaser.GameObjects.Text[] = [];
 
   constructor(private readonly session: GameSession) {
     super('game');
@@ -40,6 +41,19 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setBounds(0, 0, map.width * map.tileSize, map.height * map.tileSize);
     this.cameras.main.setBackgroundColor('#0b0f17');
     this.input2 = new MoveInput((x, y) => this.session.sendMove(x, y));
+    this.applyZoom();
+    this.scale.on('resize', () => this.applyZoom());
+  }
+
+  /**
+   * 鏡頭縮放：依畫面寬度，挑一個「整數倍」的縮放，讓畫面橫向大約看到 tilesWide 格。
+   * 整數倍才能保持像素風的銳利；文字也跟著用同樣的倍率繪製，所以不會糊。
+   */
+  private applyZoom(): void {
+    const { tileSize } = this.session.map;
+    const zoom = Math.max(cameraTuning.minZoom, Math.round(this.scale.width / (cameraTuning.tilesWide * tileSize)));
+    this.cameras.main.setZoom(zoom);
+    for (const t of this.texts) t.setResolution(zoom);
   }
 
   override update(_time: number, delta: number): void {
@@ -72,6 +86,7 @@ export class GameScene extends Phaser.Scene {
       if (seen.has(id)) continue;
       actor.sprite.destroy();
       actor.shadow.destroy();
+      this.texts.splice(this.texts.indexOf(actor.label), 1);
       actor.label.destroy();
       this.actors.delete(id);
     }
@@ -81,20 +96,21 @@ export class GameScene extends Phaser.Scene {
     const color = e.id % PLAYER_COLORS.length;
     const sprite = this.add.image(e.x, e.y, `student-${color}`).setOrigin(0.5, 1);
     const shadow = this.add.image(e.x, e.y, 'shadow').setOrigin(0.5, 1);
-    const label = this.makeText(e.x, e.y, e.name ?? '', { fontSize: '10px', color: '#ffffff', stroke: '#000000', strokeThickness: 2 }).setOrigin(0.5, 1);
+    const label = this.makeText(e.x, e.y, e.name ?? '', { fontSize: '7px', color: '#ffffff', stroke: '#000000', strokeThickness: 1.5 }).setOrigin(0.5, 1);
     const actor = { sprite, shadow, label };
     this.actors.set(e.id, actor);
     return actor;
   }
 
   /**
-   * 文字用平滑縮放。整個遊戲是像素風（最近鄰縮放），
-   * 但文字如果也用最近鄰，縮小後會糊成一團，中文尤其嚴重。
+   * 文字用「世界單位」的字級，再依鏡頭縮放倍率提高繪製解析度（見 applyZoom），
+   * 所以放大後仍然是銳利的字，不是被拉伸的點陣。
    */
   private makeText(x: number, y: number, text: string, style: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text {
     const t = this.add.text(x, y, text, { fontFamily: '"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif', ...style });
-    t.setResolution(4);
+    t.setResolution(this.cameras.main.zoom);
     t.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+    this.texts.push(t);
     return t;
   }
 
@@ -122,7 +138,7 @@ export class GameScene extends Phaser.Scene {
 
     for (const z of map.zones) {
       const name = theme.zones[z.id] ?? z.id;
-      this.makeText((z.x + z.w / 2) * ts, (z.y + z.h / 2) * ts, name, { fontSize: '11px', color: '#ffffff' })
+      this.makeText((z.x + z.w / 2) * ts, (z.y + z.h / 2) * ts, name, { fontSize: '8px', color: '#ffffff' })
         .setOrigin(0.5)
         .setAlpha(0.4)
         .setDepth(-999);

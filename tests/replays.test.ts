@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { exportReplay, parseReplay, runReplay } from '@cpu/tools';
+import { ContentVersionError, createSimForReplay, exportReplay, parseReplay, runReplay } from '@cpu/tools';
 import { cmd, newGame } from './helpers';
 
 const dir = resolve(import.meta.dirname, 'replays');
@@ -29,9 +29,17 @@ describe('黃金重播', () => {
   });
 });
 
+describe('內容版本', () => {
+  it('內容版本不同的重播，會明確說出原因，而不是只丟雜湊不符', () => {
+    const replay = parseReplay(readFileSync(resolve(dir, files[0]!), 'utf-8'));
+    expect(() => runReplay({ ...replay, contentVersion: 'old-version' })).toThrow(ContentVersionError);
+    expect(() => runReplay({ ...replay, contentVersion: 'old-version' })).toThrow(/不同版本的內容/);
+  });
+});
+
 describe('匯出重播（遇到 bug 時用）', () => {
   it('匯出的重播檔，重新跑一遍會得到完全相同的狀態', () => {
-    const sim = newGame('export-test');
+    const sim = createSimForReplay('export-test');
     sim.step([cmd('a', 'join', { name: 'A' }), cmd('b', 'join', { name: 'B' })]);
     sim.step([cmd('a', 'move', { x: 1, y: 0 })]);
     for (let i = 0; i < 100; i++) sim.step();

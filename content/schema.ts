@@ -20,8 +20,17 @@ export const PlayerTuningSchema = z.object({
 });
 export type PlayerTuning = z.infer<typeof PlayerTuningSchema>;
 
+/** 鏡頭：畫面橫向大約要看到幾格地圖。數字越小，畫面越近。 */
+export const CameraTuningSchema = z.object({
+  tilesWide: z.number().min(6).max(80),
+  /** 縮放倍率的下限（用螢幕實際像素算）。 */
+  minZoom: z.number().int().min(1).max(8),
+});
+export type CameraTuning = z.infer<typeof CameraTuningSchema>;
+
 /** 內容檔清單：路徑 → 驗證格式。content:check 會逐一檢查。 */
 export const CONTENT_FILES: Record<string, z.ZodType> = {
   'theme/zh-TW.json': ThemeSchema,
   'tuning/players.json': PlayerTuningSchema,
+  'tuning/camera.json': CameraTuningSchema,
 };

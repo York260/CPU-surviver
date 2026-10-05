@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { GOLDEN_SCENARIOS } from './golden-scenarios';
-import { REPLAY_FORMAT_VERSION, parseReplay, runReplay, type Replay } from './replay';
+import { REPLAY_FORMAT_VERSION, contentVersion, parseReplay, runReplay, type Replay } from './replay';
 
 const dir = resolve(dirname(fileURLToPath(import.meta.url)), '../../../tests/replays');
 const update = process.argv.includes('--update');
@@ -10,14 +10,18 @@ mkdirSync(dir, { recursive: true });
 
 let failed = 0;
 const build = (name: string): Replay => {
-  const input = GOLDEN_SCENARIOS[name]!;
+  const input = { ...GOLDEN_SCENARIOS[name]!, contentVersion: contentVersion() };
   return { formatVersion: REPLAY_FORMAT_VERSION, ...input, finalHash: runReplay(input).hash() };
 };
 
 if (update) {
   for (const name of Object.keys(GOLDEN_SCENARIOS)) {
     const file = resolve(dir, `${name}.json`);
-    const old = existsSync(file) ? parseReplay(readFileSync(file, 'utf-8')).finalHash : '(新檔)';
+    let old = '(新檔)';
+    if (existsSync(file)) {
+      // 舊格式的檔案也要讀得出來，才能顯示更新前後的雜湊
+      old = (JSON.parse(readFileSync(file, 'utf-8')) as { finalHash?: string }).finalHash ?? '(無法讀取)';
+    }
     const next = build(name);
     writeFileSync(file, `${JSON.stringify(next, null, 2)}\n`);
     console.log(`  ${name}：${old} → ${next.finalHash}`);
@@ -31,12 +35,17 @@ if (update) {
       console.error(`  ✘ ${name}：缺少檔案，請執行 npm run replay:update`);
       continue;
     }
-    const expected = parseReplay(readFileSync(file, 'utf-8')).finalHash;
-    const actual = build(name).finalHash;
-    if (expected === actual) console.log(`  ✔ ${name}`);
-    else {
+    const stored = parseReplay(readFileSync(file, 'utf-8'));
+    try {
+      const actual = runReplay(stored).hash();
+      if (stored.finalHash === actual) console.log(`  ✔ ${name}`);
+      else {
+        failed++;
+        console.error(`  ✘ ${name}：預期 ${stored.finalHash}，實際 ${actual}`);
+      }
+    } catch (err) {
       failed++;
-      console.error(`  ✘ ${name}：預期 ${expected}，實際 ${actual}`);
+      console.error(`  ✘ ${name}：${(err as Error).message}`);
     }
   }
   for (const f of readdirSync(dir).filter((x) => x.endsWith('.json'))) {
